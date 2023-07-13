@@ -1,5 +1,6 @@
 import { useState, useRef, ChangeEvent, useEffect } from "react";
 import { formatTime } from "../utils/formatTime";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 /**
  * @returns A component that allows the user to select a file and play it.
@@ -9,6 +10,7 @@ export default function SongPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isLoaded = useRef(false); // Track whether the audio is loaded
+  const [isPlaying, setIsPlaying] = useState(false); // Track whether the audio is playing
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -16,11 +18,17 @@ export default function SongPlayer() {
   };
 
   const handlePlay = () => {
-    audioRef.current?.play();
+    if (audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
   };
 
   const handlePause = () => {
-    audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
   };
 
   const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -69,12 +77,27 @@ export default function SongPlayer() {
     }
   }, [isLoaded]);
 
+  const renderPlayButton = () => {
+    if (!isPlaying) {
+      return (
+        <button onClick={handlePlay}>
+          <FaPlay />
+        </button>
+      );
+    } else {
+      return (
+        <button onClick={handlePause}>
+          <FaPause />
+        </button>
+      );
+    }
+  };
+
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
       <audio ref={audioRef} />
-      <button onClick={handlePlay}>Play</button>
-      <button onClick={handlePause}>Pause</button>
+      {renderPlayButton()}
       <span>{formatTime(currentTime)}</span>
       <input
         type="range"
