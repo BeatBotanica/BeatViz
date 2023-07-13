@@ -8,6 +8,7 @@ import { FaPlay, FaPause } from "react-icons/fa";
 export default function SongPlayer() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState<number | undefined>(undefined);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isLoaded = useRef(false); // Track whether the audio is loaded
   const [isPlaying, setIsPlaying] = useState(false); // Track whether the audio is playing
@@ -18,20 +19,21 @@ export default function SongPlayer() {
   };
 
   const handlePlay = () => {
-    if (audioRef.current) {
+    if (audioRef.current && isLoaded.current) {
       audioRef.current.play();
       setIsPlaying(true);
     }
   };
 
   const handlePause = () => {
-    if (audioRef.current) {
+    if (audioRef.current && isLoaded.current) {
       audioRef.current.pause();
       setIsPlaying(false);
     }
   };
 
   const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!isLoaded.current) return;
     const time = parseFloat(event.target.value);
     setCurrentTime(time);
     if (audioRef.current) audioRef.current.currentTime = time;
@@ -57,6 +59,7 @@ export default function SongPlayer() {
     // Reset the current time when the audio is loaded
     const handleLoadedMetadata = () => {
       setCurrentTime(0);
+      setDuration(audioRef.current?.duration);
       isLoaded.current = true;
     };
 
@@ -123,19 +126,17 @@ export default function SongPlayer() {
         <input
           type="range"
           min={0}
-          max={audioRef.current?.duration}
+          max={duration}
           value={currentTime}
           onChange={handleSliderChange}
           className="min-w-[500px] accent-indigo-500 bg-indigo-100 dark:bg-indigo-900"
         />
-        <div className="flex items-center rounded-md shadow-sm p-2 bg-[#f9f9f9] dark:bg-[#1a1a1a] cursor-default">
+        <div className="flex items-center">
           <span className="mr-2">{formatTime(currentTime)}</span>
           {"/"}
-          {audioRef.current && (
-            <span className="ml-2">
-              {formatTime(audioRef.current.duration)}
-            </span>
-          )}
+          <span className="ml-2">
+            {duration ? formatTime(duration) : formatTime(currentTime)}
+          </span>
         </div>
       </div>
     </div>
