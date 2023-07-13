@@ -77,6 +77,11 @@ export default function SongPlayer() {
     }
   }, [isLoaded]);
 
+  useEffect(() => {
+    // Set playing to false when the audio ends
+    if (currentTime === audioRef.current?.duration) setIsPlaying(false);
+  }, [audioRef.current, currentTime]);
+
   const renderPlayButton = () => {
     if (!isPlaying) {
       return (
