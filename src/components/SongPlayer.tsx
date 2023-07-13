@@ -99,19 +99,45 @@ export default function SongPlayer() {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      <audio ref={audioRef} />
-      {renderPlayButton()}
-      <span>{formatTime(currentTime)}</span>
-      <input
-        type="range"
-        min={0}
-        max={audioRef.current?.duration}
-        value={currentTime}
-        onChange={handleSliderChange}
-      />
-      {audioRef.current && <span>{formatTime(audioRef.current.duration)}</span>}
+    <div className="w-full flex flex-col items-center space-y-8">
+      <div className="w-full">
+        <div className="flex items-center justify-start">
+          <label
+            htmlFor="file-input"
+            className="rounded p-2 border border-gray-300 bg-white text-gray-700 shadow cursor-pointer"
+          >
+            Choose File
+          </label>{" "}
+          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+        </div>
+        <input
+          type="file"
+          onChange={handleFileChange}
+          className="hidden"
+          id="file-input"
+        />
+      </div>
+      <div className="w-full flex flex-row items-center space-x-4">
+        <audio ref={audioRef} />
+        {renderPlayButton()}
+        <input
+          type="range"
+          min={0}
+          max={audioRef.current?.duration}
+          value={currentTime}
+          onChange={handleSliderChange}
+          className="min-w-[500px] accent-indigo-500 bg-indigo-100 dark:bg-indigo-900"
+        />
+        <div className="flex items-center rounded-md shadow-sm p-2 bg-[#f9f9f9] dark:bg-[#1a1a1a] cursor-default">
+          <span className="mr-2">{formatTime(currentTime)}</span>
+          {"/"}
+          {audioRef.current && (
+            <span className="ml-2">
+              {formatTime(audioRef.current.duration)}
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
