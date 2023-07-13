@@ -1,4 +1,5 @@
 import { useState, useRef, ChangeEvent, useEffect } from "react";
+import { formatTime } from "../utils/formatTime";
 
 /**
  * @returns A component that allows the user to select a file and play it.
@@ -74,6 +75,7 @@ export default function SongPlayer() {
       <audio ref={audioRef} />
       <button onClick={handlePlay}>Play</button>
       <button onClick={handlePause}>Pause</button>
+      <span>{formatTime(currentTime)}</span>
       <input
         type="range"
         min={0}
@@ -81,7 +83,7 @@ export default function SongPlayer() {
         value={currentTime}
         onChange={handleSliderChange}
       />
-      <span>{currentTime.toFixed(2)}</span>
+      {audioRef.current && <span>{formatTime(audioRef.current.duration)}</span>}
     </div>
   );
 }
